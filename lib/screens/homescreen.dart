@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblepics_tv_app/model/book.dart';
@@ -46,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    log("Number of books retrieved: ${widget.books.length}");
+
     return SafeArea(
       child: Scaffold(
         body: Stack(
