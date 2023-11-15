@@ -16,6 +16,18 @@ class ChaptersScreen extends StatefulWidget {
 }
 
 class _ChaptersScreenState extends State<ChaptersScreen> {
+  // Method to handle image load failure
+  void _handleImageLoadFailure(int index) {
+    // Schedule the state update to after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          chapters[index].imageLoadFailed = true;
+        });
+      }
+    });
+  }
+
   List<Chapter> chapters = [];
   ScrollController _scrollController = ScrollController();
   int selectedCardIndex = 0; // Track the index of the selected card
@@ -129,64 +141,91 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Container(
-                          width: isFocused ? 250 : 200,
-                          height: isFocused ? 150 : 100,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            border: isFocused
-                                ? Border.all(
-                                    color: Colors.black.withOpacity(0.6),
-                                    width: 2.0)
-                                : null,
-                          ),
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 500),
+                        if (!chapters[index].imageLoadFailed)
+                          Container(
+                            width: isFocused ? 250 : 200,
+                            height: isFocused ? 150 : 100,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
                               border: isFocused
-                                  ? Border.all(color: Colors.grey, width: 2.0)
+                                  ? Border.all(
+                                      color: Colors.black.withOpacity(0.6),
+                                      width: 2.0)
                                   : null,
                             ),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                  isFocused ? 15.0 : 12.0),
-                              child: Image.network(
-                                chapters[index].imageurl,
-                                fit: BoxFit.cover,
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
+                                border: isFocused
+                                    ? Border.all(color: Colors.grey, width: 2.0)
+                                    : null,
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                    isFocused ? 15.0 : 12.0),
+                                child: Image.network(
+                                  chapters[index].imageurl,
+                                  fit: BoxFit.cover,
+                                  errorBuilder:
+                                      (context, error, StackTrace? StackTrace) {
+                                    _handleImageLoadFailure(index);
+
+                                    return SizedBox();
+                                  },
+                                ),
                               ),
                             ),
                           ),
-                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                chapters[index].title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18,
-                                ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.0),
+                              border: isFocused
+                                  ? Border.all(
+                                      color: Colors.black.withOpacity(0.6),
+                                      width: 2.0)
+                                  : null,
+                            ),
+                            child: AnimatedContainer(
+                              duration: const Duration(milliseconds: 500),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12.0),
+                                border: isFocused &&
+                                        chapters[index].imageLoadFailed
+                                    ? Border.all(color: Colors.grey, width: 2.0)
+                                    : null,
                               ),
-                              const SizedBox(height: 8),
-                              Opacity(
-                                opacity: 0.6,
-                                child: Text(
-                                  chapters[index].summary,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    chapters[index].title,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 18,
+                                    ),
                                   ),
-                                ),
+                                  const SizedBox(height: 8),
+                                  Opacity(
+                                    opacity: 0.6,
+                                    child: Text(
+                                      chapters[index].summary,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                        )
                       ],
                     ),
                   ),

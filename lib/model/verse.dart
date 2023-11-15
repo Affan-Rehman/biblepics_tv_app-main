@@ -1,4 +1,5 @@
 class Verse {
+  bool imageLoadFailed = false;
   final int id;
   final String book;
   final int chapter;

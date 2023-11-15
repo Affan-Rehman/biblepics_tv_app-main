@@ -222,10 +222,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   is NetworkImageLoadException &&
                                               error.statusCode == 403) {
                                             return Image.asset(
-                                                "assets/images/placeholder.webp");
+                                              "assets/images/placeholder.webp",
+                                              width: 220,
+                                              height: 120,
+                                              fit: BoxFit.fill,
+                                            );
                                           } else {
                                             return Image.asset(
-                                                "assets/images/placeholder.webp");
+                                              "assets/images/placeholder.webp",
+                                              width: 220,
+                                              height: 120,
+                                              fit: BoxFit.fill,
+                                            );
                                           }
                                         },
                                       ),

@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names
+
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:biblepics_tv_app/helper/database.dart';
@@ -16,6 +18,18 @@ class VerseScreen extends StatefulWidget {
 
 class _VerseScreenState extends State<VerseScreen> {
   bool controlsVisible = false;
+
+  // Method to handle image load failure
+  void _handleImageLoadFailure(int index) {
+    // Schedule the state update to after the build phase
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          verses[index].imageLoadFailed = true;
+        });
+      }
+    });
+  }
 
   List<Verse> verses = [];
   PageController _pageController = PageController();
@@ -211,20 +225,23 @@ class _VerseScreenState extends State<VerseScreen> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.height * 0.65,
-                  height: MediaQuery.of(context).size.height * 0.65,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.0),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12.0),
-                    child: Image.network(
-                      verses[index].imageurl,
-                      fit: BoxFit.cover,
+                if (!verses[index].imageLoadFailed)
+                  Container(
+                    width: MediaQuery.of(context).size.height * 0.65,
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12.0),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12.0),
+                      child: Image.network(verses[index].imageurl,
+                          fit: BoxFit.cover, errorBuilder:
+                              (context, error, StackTrace? stackTrace) {
+                        _handleImageLoadFailure(index);
+                        return SizedBox();
+                      }),
                     ),
                   ),
-                ),
                 const SizedBox(height: 10),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.6,
