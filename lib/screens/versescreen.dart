@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names
+// ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names, must_be_immutable
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -9,8 +9,10 @@ import 'package:flutter/services.dart';
 class VerseScreen extends StatefulWidget {
   final String book;
   final int chapter;
+  late int nextCh;
 
-  VerseScreen({required this.book, required this.chapter});
+  VerseScreen(
+      {required this.book, required this.chapter, required this.nextCh});
 
   @override
   _VerseScreenState createState() => _VerseScreenState();
@@ -40,6 +42,42 @@ class _VerseScreenState extends State<VerseScreen> {
   int totalSlides = 0;
   int remainingSlides = 0;
   late FocusNode _focusNode;
+  void navigateToNextChapter(BuildContext context) {
+    Navigator.pop(context);
+    int newIndex = widget.nextCh;
+    if (!(widget.nextCh == widget.chapter)) {
+      newIndex = selectedCardIndex + 1;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => VerseScreen(
+            book: widget.book,
+            chapter: widget.nextCh,
+            nextCh: newIndex,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _changeFocus(int direction) {
+    int newIndex = selectedCardIndex + direction;
+    if (newIndex >= 0 && newIndex < verses.length) {
+      setState(() {
+        selectedCardIndex = newIndex;
+        remainingSlides = totalSlides - newIndex - 1;
+      });
+
+      _pageController.animateToPage(
+        selectedCardIndex,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+    if (newIndex == verses.length) {
+      navigateToNextChapter(context);
+    }
+  }
 
   @override
   void initState() {
@@ -94,22 +132,6 @@ class _VerseScreenState extends State<VerseScreen> {
   void resetControlsTimer() {
     _controlsTimer?.cancel();
     _controlsTimer = startControlsTimer();
-  }
-
-  void _changeFocus(int direction) {
-    int newIndex = selectedCardIndex + direction;
-    if (newIndex >= 0 && newIndex < verses.length) {
-      setState(() {
-        selectedCardIndex = newIndex;
-        remainingSlides = totalSlides - newIndex - 1;
-      });
-
-      _pageController.animateToPage(
-        selectedCardIndex,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
-    }
   }
 
   void togglePlayPause() {

@@ -92,10 +92,16 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
   }
 
   void _navigateToVerseScreen() {
+    int newIndex = selectedCardIndex;
+    if (!(chapters.length == selectedCardIndex + 1)) {
+      newIndex = selectedCardIndex + 1;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => VerseScreen(
+          nextCh: chapters[newIndex].chapter,
           book: chapters[selectedCardIndex].book,
           chapter: chapters[selectedCardIndex].chapter,
         ),
@@ -141,91 +147,72 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        if (!chapters[index].imageLoadFailed)
-                          Container(
-                            width: isFocused ? 250 : 200,
-                            height: isFocused ? 150 : 100,
+                        Container(
+                          width: isFocused ? 250 : 200,
+                          height: isFocused ? 150 : 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            border: isFocused
+                                ? Border.all(
+                                    color: Colors.black.withOpacity(0.6),
+                                    width: 2.0)
+                                : null,
+                          ),
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 500),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(12.0),
                               border: isFocused
-                                  ? Border.all(
-                                      color: Colors.black.withOpacity(0.6),
-                                      width: 2.0)
+                                  ? Border.all(color: Colors.grey, width: 2.0)
                                   : null,
                             ),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 500),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: isFocused
-                                    ? Border.all(color: Colors.grey, width: 2.0)
-                                    : null,
-                              ),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(
-                                    isFocused ? 15.0 : 12.0),
-                                child: Image.network(
-                                  chapters[index].imageurl,
-                                  fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, StackTrace? StackTrace) {
-                                    _handleImageLoadFailure(index);
-
-                                    return SizedBox();
-                                  },
-                                ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                  isFocused ? 15.0 : 12.0),
+                              child: Image.network(
+                                chapters[index].imageurl,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (context, error, StackTrace? StackTrace) {
+                                  _handleImageLoadFailure(index);
+                                  return Image.asset(
+                                    'assets/images/place_holder.jpg',
+                                    fit: BoxFit.cover,
+                                  );
+                                },
                               ),
                             ),
                           ),
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.0),
-                              border: isFocused
-                                  ? Border.all(
-                                      color: Colors.black.withOpacity(0.6),
-                                      width: 2.0)
-                                  : null,
-                            ),
-                            child: AnimatedContainer(
-                              duration: const Duration(milliseconds: 500),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12.0),
-                                border: isFocused &&
-                                        chapters[index].imageLoadFailed
-                                    ? Border.all(color: Colors.grey, width: 2.0)
-                                    : null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                chapters[index].title,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    chapters[index].title,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18,
-                                    ),
+                              const SizedBox(height: 8),
+                              Opacity(
+                                opacity: 0.6,
+                                child: Text(
+                                  chapters[index].summary,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
                                   ),
-                                  const SizedBox(height: 8),
-                                  Opacity(
-                                    opacity: 0.6,
-                                    child: Text(
-                                      chapters[index].summary,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
