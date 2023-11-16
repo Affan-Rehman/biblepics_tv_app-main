@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblepics_tv_app/model/book.dart';
@@ -123,7 +125,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                             const SizedBox(height: 20),
-                            Container(
+                            SizedBox(
                               width: MediaQuery.of(context).size.width * 0.45,
                               child: Text(
                                 widget.books[selectedBookIndex].summary,
@@ -242,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   if (isFocused)
                                     TweenAnimationBuilder(
                                       tween: Tween<double>(begin: 1, end: 1.1),
-                                      duration: Duration(milliseconds: 50),
+                                      duration:
+                                          const Duration(milliseconds: 50),
                                       builder: (context, scale, child) {
                                         return Transform.scale(
                                           scale: scale,

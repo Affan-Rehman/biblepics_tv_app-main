@@ -21,7 +21,7 @@ Future<PostgreSQLConnection> connectToDB() async {
 Future<List<Book>> fetchBooks(String partOf) async {
   var connection = await connectToDB();
   List<List<dynamic>> results = await connection.query(
-      "SELECT * FROM playground_books WHERE bookid <67 ORDER BY bookid",
+      "SELECT * FROM playground_books ORDER BY bookid",
       substitutionValues: {
         'partOf': partOf,
       });
@@ -47,7 +47,7 @@ Future<List<Book>> fetchBooks(String partOf) async {
 Future<List<Chapter>> fetchChapters(String book) async {
   var connection = await connectToDB();
   List<List<dynamic>> results = await connection.query(
-      "SELECT * FROM playground_chap_titles WHERE book = @book AND chapter<3 ORDER BY id",
+      "SELECT * FROM playground_chap_titles WHERE book = @book ORDER BY id",
       substitutionValues: {
         'book': book,
       });
