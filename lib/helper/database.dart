@@ -21,14 +21,18 @@ Future<PostgreSQLConnection> connectToDB() async {
 Future<List<Book>> fetchBooks(String partOf) async {
   var connection = await connectToDB();
   List<List<dynamic>> results = await connection.query(
-      "SELECT * FROM playground_books WHERE bookid <67 ORDER BY bookid",
+      "SELECT * FROM playground_books ORDER BY bookid",
       substitutionValues: {
         'partOf': partOf,
       });
   List<Book> books = results.map((row) {
     return Book(
       id: row[0],
-      title: row[1],
+      book: row[1],
+      lastchapter: row[2],
+      partof: row[7],
+      title: row[8],
+      timetoread: row[10],
       imageUrl:
           '${'${'https://d3owcl6pd5zkqc.cloudfront.net/images/' + row[1]}/' + row[1]}.webp',
       summary: row[4],
@@ -47,7 +51,7 @@ Future<List<Book>> fetchBooks(String partOf) async {
 Future<List<Chapter>> fetchChapters(String book) async {
   var connection = await connectToDB();
   List<List<dynamic>> results = await connection.query(
-      "SELECT * FROM playground_chap_titles WHERE book = @book AND chapter<3 ORDER BY id",
+      "SELECT * FROM playground_chap_titles WHERE book = @book ORDER BY id",
       substitutionValues: {
         'book': book,
       });

@@ -1,4 +1,4 @@
-// ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names, must_be_immutable
+// ignore_for_file: non_constant_identifier_names, avoid_types_as_parameter_names, must_be_immutable, use_key_in_widget_constructors, library_private_types_in_public_api, avoid_print
 
 import 'dart:async';
 import 'package:flutter/material.dart';
@@ -22,16 +22,7 @@ class _VerseScreenState extends State<VerseScreen> {
   bool controlsVisible = false;
 
   // Method to handle image load failure
-  void _handleImageLoadFailure(int index) {
-    // Schedule the state update to after the build phase
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        setState(() {
-          verses[index].imageLoadFailed = true;
-        });
-      }
-    });
-  }
+  void _handleImageLoadFailure(int index) {}
 
   List<Verse> verses = [];
   PageController _pageController = PageController();
@@ -242,44 +233,58 @@ class _VerseScreenState extends State<VerseScreen> {
       child: Stack(
         alignment: Alignment.center,
         children: [
-          SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (!verses[index].imageLoadFailed)
-                  Container(
-                    width: MediaQuery.of(context).size.height * 0.65,
-                    height: MediaQuery.of(context).size.height * 0.65,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Image.network(verses[index].imageurl,
-                          fit: BoxFit.cover, errorBuilder:
-                              (context, error, StackTrace? stackTrace) {
-                        _handleImageLoadFailure(index);
-                        return SizedBox();
-                      }),
-                    ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              if (verses[index].imagefound)
+                Container(
+                  width: MediaQuery.of(context).size.height * 0.65,
+                  height: MediaQuery.of(context).size.height * 0.65,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12.0),
                   ),
-                const SizedBox(height: 10),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: Text(
-                    verses[index].versetext,
-                    style: TextStyle(
-                      fontFamily: "Cardo",
-                      color: Colors.white.withOpacity(0.7),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Image.network(
+                      verses[index].imageurl,
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-                const SizedBox(height: 5),
-              ],
-            ),
+              (verses[index].imagefound)
+                  ? const SizedBox(height: 10)
+                  : SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+              (!verses[index].imagefound)
+                  ? Container(
+                      height: MediaQuery.of(context).size.height * 0.65,
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      alignment: Alignment.center,
+                      child: Text(
+                        verses[index].versetext,
+                        style: TextStyle(
+                          fontFamily: "Cardo",
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                      ),
+                    )
+                  : Container(
+                      width: MediaQuery.of(context).size.width * 0.6,
+                      child: Text(
+                        verses[index].versetext,
+                        style: TextStyle(
+                          fontFamily: "Cardo",
+                          color: Colors.white.withOpacity(0.7),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 22,
+                        ),
+                      ),
+                    )
+            ],
           ),
           Positioned(
             bottom: 0,

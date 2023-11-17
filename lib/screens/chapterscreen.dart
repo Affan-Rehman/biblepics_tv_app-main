@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
 
 import 'package:biblepics_tv_app/model/chapter.dart';
 import 'package:biblepics_tv_app/screens/versescreen.dart';
@@ -78,9 +78,11 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
         selectedCardIndex += direction;
       });
 
-      // Calculate the target scroll position
+      const scrollFactor = 0.333; // Example factor, modify as needed
       final targetPosition = _scrollController.position.pixels +
-          direction * (_scrollController.position.viewportDimension - 20);
+          direction *
+              (_scrollController.position.viewportDimension - 40) *
+              scrollFactor;
 
       // Smoothly scroll to the target position
       _scrollController.animateTo(
@@ -173,11 +175,11 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                                 chapters[index].imageurl,
                                 fit: BoxFit.cover,
                                 errorBuilder:
-                                    (context, error, StackTrace? StackTrace) {
+                                    (context, error, StackTrace? stackTrace) {
                                   _handleImageLoadFailure(index);
                                   return Image.asset(
-                                    'assets/images/place_holder.jpg',
-                                    fit: BoxFit.cover,
+                                    'assets/images/placeholder.webp',
+                                    fit: BoxFit.fill,
                                   );
                                 },
                               ),
@@ -197,6 +199,15 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                                   fontSize: 18,
                                 ),
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Chapter ${chapters[index].chapter} • ${chapters[index].number_of_verses} verses • ${chapters[index].time_to_read} minutes',
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 200, 200, 200),
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
+                                ),
+                              ),
                               const SizedBox(height: 8),
                               Opacity(
                                 opacity: 0.6,
@@ -208,6 +219,15 @@ class _ChaptersScreenState extends State<ChaptersScreen> {
                                     color: Colors.white,
                                     fontSize: 16,
                                   ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Starring: ${chapters[index].figures}',
+                                style: const TextStyle(
+                                  color: Color.fromARGB(255, 200, 200, 200),
+                                  fontWeight: FontWeight.normal,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],

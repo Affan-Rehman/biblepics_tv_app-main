@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors_in_immutables, use_key_in_widget_constructors, avoid_print
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:biblepics_tv_app/model/book.dart';
@@ -103,18 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "Creation • ${widget.books[selectedBookIndex].estimatedtime} • ",
-                              style: TextStyle(
-                                color: const Color(0xFFC4C7C5).withOpacity(0.6),
-                                fontSize: 16,
-                                fontFamily: 'Roboto',
-                                fontWeight: FontWeight.w500,
-                                letterSpacing: 0.25,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              widget.books[selectedBookIndex].title,
+                              widget.books[selectedBookIndex].book,
                               style: const TextStyle(
                                 color: Color(0xFFE2E2E2),
                                 fontSize: 36,
@@ -122,8 +113,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
+                            const SizedBox(height: 4),
+                            Text(
+                              "${widget.books[selectedBookIndex].title} • ${widget.books[selectedBookIndex].estimatedtime} • ${widget.books[selectedBookIndex].timetoread} minutes",
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 242, 242, 242)
+                                    .withOpacity(0.6),
+                                fontSize: 16,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.25,
+                              ),
+                            ),
                             const SizedBox(height: 20),
-                            Container(
+                            SizedBox(
                               width: MediaQuery.of(context).size.width * 0.45,
                               child: Text(
                                 widget.books[selectedBookIndex].summary,
@@ -165,6 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             });
                             scrollToSelectedBook();
                           }
+
                           return KeyEventResult.handled;
                         }
                         if (event.logicalKey == LogicalKeyboardKey.enter ||
@@ -173,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ChaptersScreen(
-                                book: widget.books[selectedBookIndex].title,
+                                book: widget.books[selectedBookIndex].book,
                               ),
                             ),
                           );
@@ -223,16 +227,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                               error.statusCode == 403) {
                                             return Image.asset(
                                               "assets/images/placeholder.webp",
-                                              width: 220,
-                                              height: 120,
-                                              fit: BoxFit.fill,
                                             );
                                           } else {
                                             return Image.asset(
                                               "assets/images/placeholder.webp",
-                                              width: 220,
-                                              height: 120,
-                                              fit: BoxFit.fill,
                                             );
                                           }
                                         },
@@ -242,7 +240,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   if (isFocused)
                                     TweenAnimationBuilder(
                                       tween: Tween<double>(begin: 1, end: 1.1),
-                                      duration: Duration(milliseconds: 50),
+                                      duration:
+                                          const Duration(milliseconds: 50),
                                       builder: (context, scale, child) {
                                         return Transform.scale(
                                           scale: scale,
